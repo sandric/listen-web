@@ -6,14 +6,6 @@ set :server, :thin
 set :bind, '0.0.0.0'
 
 get '/' do
-  #listener = Listen.to('/home/sandric/listen-test', debug: false) do |modified, added, removed|
-    #puts "modified absolute path: #{modified}" if modified.any?
-    #puts "added absolute path: #{added}" if added.any? 
-    #puts "removed absolute path: #{removed}" if removed.any? 
-  #end
-  #listener.start # not blocking
-  #sleep
-
   stream do |out|
     out.puts <<eos
     <style>
@@ -80,10 +72,12 @@ get '/' do
     </style>
 eos
 
-    out.puts "<div class='modified'>/home/sandric/listen-test</div>"
-    sleep 1
-    out.puts "<div class='added'>/home/sandric/listen-test</div>"
-    sleep 1
-    out.puts "<div class='removed'>/home/sandric/listen-test</div>"
+    listener = Listen.to('/home/sandric/listen-test', debug: false) do |modifications, additions, deletions|
+      modifications.each { |modification| out.puts "<div class='modified'>#{modification}</div>" }
+      additions.each { |addition| out.puts "<div class='added'>#{addition}</div>" }
+      deletions.each { |deletion| out.puts "<div class='removed'>#{deletion}</div>" }
+    end
+    listener.start # not blocking
+    sleep
   end
 end
