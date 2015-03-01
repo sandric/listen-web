@@ -11,7 +11,7 @@ get '/' do
     <style>
       div {
         padding: 5px;
-        padding-left: 20%;
+        padding-left: 5%;
         font-weight: bold;
         font-family: monospace;
         margin-bottom: 10px;
@@ -20,6 +20,12 @@ get '/' do
         -moz-animation: fadein 2s; /* Firefox */
         -webkit-animation: fadein 2s; /* Safari and Chrome */
         -o-animation: fadein 2s; /* Opera */
+      }
+
+      span {
+        padding-right: 50px;
+        font-weight: normal;
+        font-size: smaller;
       }
       
       .modified {
@@ -72,10 +78,14 @@ get '/' do
     </style>
 eos
 
-    listener = Listen.to('/home/sandric/listen-test', debug: false) do |modifications, additions, deletions|
-      modifications.each { |modification| out.puts "<div class='modified'>#{modification}</div>" }
-      additions.each { |addition| out.puts "<div class='added'>#{addition}</div>" }
-      deletions.each { |deletion| out.puts "<div class='removed'>#{deletion}</div>" }
+    out.puts "<div>Starting listening...</div>" 
+
+    listener = Listen.to('/home/sandric/listen-test', debug: true) do |modifications, additions, deletions|
+      time = Time.now.strftime("%d/%m/%Y %H:%M:%S")
+
+      modifications.each { |modification| out.puts "<div class='modified'><span>#{time}</span>#{modification}</div>" }
+      additions.each { |addition| out.puts "<div class='added'><span>#{time}</span>#{addition}</div>" }
+      deletions.each { |deletion| out.puts "<div class='removed'><span>#{time}</span>#{deletion}</div>" }
     end
     listener.start # not blocking
     sleep
