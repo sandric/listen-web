@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'listen'
+gem 'listen', '~>2.7.12'
 gem 'sinatra'
 gem 'sinatra-contrib'
 
