@@ -111,13 +111,30 @@ eos
     out.puts "<div>Starting listening...</div>" 
 
 
-    listener = Listen.to('/home', debug: true) do |modifications, additions, deletions|
+    listener = Listen.to('/home',
+                         '/bin',
+                         '/sbin',
+                         '/lib',
+                         '/lib64',
+                         '/opt',
+                         '/srv',
+                         '/usr',
+                         '/var',
+                         ignore: [
+                           %r{/var/lock},
+                           %r{/var/run},
+                           %r{/var/tmp}
+                         ],
+                         debug: true) do |modifications, additions, deletions|
       time = Time.now.strftime("%d/%m/%Y %H:%M:%S")
 
       modifications.each { |modification| out.puts "<div class='modified'><span>#{time}</span>#{modification}</div>" }
       additions.each { |addition| out.puts "<div class='added'><span>#{time}</span>#{addition}</div>" }
       deletions.each { |deletion| out.puts "<div class='removed'><span>#{time}</span>#{deletion}</div>" }
+
+      out.puts "<script>window.scrollTo(0,document.body.scrollHeight);</script>"               
     end
+    
     listener.start # not blocking
     sleep
   end
